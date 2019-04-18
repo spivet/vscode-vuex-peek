@@ -29,19 +29,34 @@ function provideDefinition(document, position) {
 	console.log('line: ' + line.text.trim()) // 当前光标所在行
 	// 只处理package.json文件
 	if (lineText.slice(0, 2) === 'vx') {
+		const vuexType = lineText.slice(2,3)
+		let filename
+		switch (vuexType) {
+			case 'a':
+				filename = 'actions.js'
+				break;
+			case 'm':
+				filename = 'mutaions.js'
+				break;
+			case 'g':
+				filename = 'getters.js'
+				break;
+			default:
+				filename = 'index.js';
+		}
 		const address = util.getQuotedString(lineText)
 		const addressArr = address.split('/')
 		let destPath
 		// vuex 状态没有定义在 module 里
 		if (addressArr.length === 1) {
-			destPath = `${workspacePath}/${storePath}/store/index.js`
+			destPath = `${workspacePath}/${storePath}/store/${filename}`
 		}
 		// vuex 状态定义在 module 里
 		if (addressArr.length === 2) {
 			const module = addressArr[0]
 			const upercaseIndex = util.getUpercaseIndex(module)
 			const dirname = util.joinString(module, upercaseIndex)
-			destPath = `${workspacePath}/${storePath}/store/modules/${dirname}/index.js`
+			destPath = `${workspacePath}/${storePath}/store/modules/${dirname}/${filename}`
 		}
 		if (fs.existsSync(destPath)) {
 			return new vscode.Location(vscode.Uri.file(destPath), new vscode.Position(0, 0))
