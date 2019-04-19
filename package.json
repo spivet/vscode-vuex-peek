@@ -2,7 +2,7 @@
 	"name": "vuex_peek",
 	"displayName": "vuex peek",
 	"description": "",
-	"version": "0.0.1",
+	"version": "0.6.0",
 	"publisher": "Mcbai",
 	"engines": {
 		"vscode": "^1.33.0"
@@ -16,7 +16,7 @@
 	"main": "./extension.js",
 	"contributes": {
     "configuration": {
-      "title": "store 文件夹路径",
+      "title": "store path",
       "properties": {
         "vuex_peek.storePath": {
           "type": "array",
@@ -24,7 +24,7 @@
 					"items": {
 							"type": "string"
 					},
-          "description": "A list of vscode language names where the extension should be used."
+          "description": "A list for the path of store folder."
         }
 			}
 		}

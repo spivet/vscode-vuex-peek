@@ -1,3 +1,29 @@
+const readline = require('readline');
+const fs = require('fs');
+
+/**
+ * 获取指定字符串在文件中的第几行
+ * @param {String} filePath 文件路径
+ * @param {String} word 要匹配的字符串
+ */
+function getLineNum(filePath, word) {
+  let row = 0
+  const rl = readline.createInterface({
+    input: fs.createReadStream(filePath),
+    crlfDelay: Infinity
+  })
+  return new Promise((resolve) => {
+    rl.on('line', (line) => {
+      row++
+      if (new RegExp(word).test(line)) {
+        rl.close()
+        resolve(row)
+      }
+    })
+  })
+
+}
+
 /**
  * 获取字符串中，单引号或双引号里的内容
  * @param {String} str 字符串
@@ -49,6 +75,7 @@ function findStorePath(storePathArr, filePath) {
 }
 
 module.exports = {
+  getLineNum,
   getQuotedString,
   getUpercaseIndex,
   joinString,

@@ -1,5 +1,4 @@
 const vscode = require('vscode')
-const path = require('path')
 const fs = require('fs')
 const util = require('./util')
 
@@ -9,8 +8,7 @@ const util = require('./util')
  * @param {*} document 
  * @param {*} position
  */
-function provideDefinition(document, position) {
-	const fileName	= document.fileName
+async function provideDefinition(document, position) {
 	const filePath = document.uri.path
 	const workspacePath = vscode.workspace.workspaceFolders[0].uri.path.substr(1)
 	const word		= document.getText(document.getWordRangeAtPosition(position))
@@ -20,47 +18,71 @@ function provideDefinition(document, position) {
 	const storePath = util.findStorePath(storePathArr, filePath)
 	// 光标所在行的文字内容
 	const lineText = line.text.trim()
-	// const projectPath = util.getProjectPath(document)
-
-	console.log('====== 进入 provideDefinition 方法 ======')
-	console.log('fileName: ' + fileName) // 当前文件完整路径
-	console.log('workspaceFolders: ' + workspacePath) // 当前文件所在目录
-	console.log('word: ' + word) // 当前光标所在单词
-	console.log('line: ' + line.text.trim()) // 当前光标所在行
 	// 只处理package.json文件
 	if (lineText.slice(0, 2) === 'vx') {
 		const vuexType = lineText.slice(2,3)
 		let filename
+		let destPath
 		switch (vuexType) {
+			case 's':
+				filename = 'index.js'
+				destPath = handleState(lineText, workspacePath, storePath)
+				break;
 			case 'a':
 				filename = 'actions.js'
+				destPath = handleAMG(lineText, workspacePath, storePath, filename)
 				break;
 			case 'm':
 				filename = 'mutaions.js'
+				destPath = handleAMG(lineText, workspacePath, storePath, filename)
 				break;
 			case 'g':
 				filename = 'getters.js'
+				destPath = handleAMG(lineText, workspacePath, storePath, filename)
 				break;
 			default:
 				filename = 'index.js';
 		}
-		const address = util.getQuotedString(lineText)
-		const addressArr = address.split('/')
-		let destPath
-		// vuex 状态没有定义在 module 里
-		if (addressArr.length === 1) {
-			destPath = `${workspacePath}/${storePath}/store/${filename}`
-		}
-		// vuex 状态定义在 module 里
-		if (addressArr.length === 2) {
-			const module = addressArr[0]
-			const upercaseIndex = util.getUpercaseIndex(module)
-			const dirname = util.joinString(module, upercaseIndex)
-			destPath = `${workspacePath}/${storePath}/store/modules/${dirname}/${filename}`
-		}
+		
 		if (fs.existsSync(destPath)) {
-			return new vscode.Location(vscode.Uri.file(destPath), new vscode.Position(0, 0))
+			const row = await util.getLineNum(destPath, word)
+			return new vscode.Location(vscode.Uri.file(destPath), new vscode.Position(row - 1, 0))
 		}
+	}
+}
+
+function handleState(lineText, workspacePath, storePath) {
+  let address
+  if (/=>/.test(lineText)) {
+    address = lineText.split('=>')[1]
+  } else {
+    address = util.getQuotedString(lineText)
+  }
+	const addressArr = address.split('.')
+	if (addressArr.length === 2) {
+		return `${workspacePath}/${storePath}/store/index.js`
+	}
+	if (addressArr.length === 3) {
+		const module = addressArr[1]
+		const upercaseIndex = util.getUpercaseIndex(module)
+		const dirname = util.joinString(module, upercaseIndex)
+		return `${workspacePath}/${storePath}/store/modules/${dirname}/index.js`
+	}
+}
+
+function handleAMG(lineText, workspacePath, storePath, filename) {
+	const address = util.getQuotedString(lineText)
+	const addressArr = address.split('/')
+	// vuex 状态没有定义在 module 里
+	if (addressArr.length === 1) {
+		return `${workspacePath}/${storePath}/store/${filename}`
+	}
+	// vuex 状态定义在 module 里
+	if (addressArr.length === 2) {
+		const module = addressArr[0]
+		const upercaseIndex = util.getUpercaseIndex(module)
+		const dirname = util.joinString(module, upercaseIndex)
+		return `${workspacePath}/${storePath}/store/modules/${dirname}/${filename}`
 	}
 }
 
