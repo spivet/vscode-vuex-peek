@@ -1,9 +1,13 @@
 {
-	"name": "vuex_peek",
+	"name": "vscode-vuex-peek",
 	"displayName": "vuex peek",
 	"description": "",
 	"version": "0.6.0",
 	"publisher": "Mcbai",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Mcbai/vscode-vuex-peek"
+  },
 	"engines": {
 		"vscode": "^1.33.0"
 	},
