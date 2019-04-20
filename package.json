@@ -1,8 +1,8 @@
 {
 	"name": "vscode-vuex-peek",
 	"displayName": "vuex peek",
-	"description": "",
-	"icon": "vuex-peek-icon.png",
+	"description": "Allows peek and goto vuex definition for Vue components",
+	"icon": "images/vuex-peek-icon.png",
 	"keywords": [
 			"peek",
 			"definition",
