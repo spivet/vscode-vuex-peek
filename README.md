@@ -2,7 +2,7 @@
 
 This extension extends Vue code editing with `Go To Definition` and `Peek Definition` support. It helps us quickly jump to or peek the file where the vuex property defined from a `.vue` component.
 
-![使用示例](https://github.com/Mcbai/vscode-vuex-peek/blob/master/example.gif)
+![使用示例](https://github.com/Mcbai/vscode-vuex-peek/blob/master/images/example.gif)
 
 You can also use `Ctrl + click` to jump to the postion where the vuex property defined.
 
@@ -14,7 +14,7 @@ Whene we reference the vuex property in our `.vue` components, it's not a regula
 
 2. You need to separate `store` to different files, like this:
 
-![文件划分](https://github.com/Mcbai/vscode-vuex-peek/blob/master/dir.png)
+![文件划分](https://github.com/Mcbai/vscode-vuex-peek/blob/master/images/dir.png)
 
 3. You need to add prefix for alias when you use in `.vue` components:
 
