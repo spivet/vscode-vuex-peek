@@ -37,7 +37,7 @@ Whene we reference the vuex property in our `.vue` components, it's not a regula
     })
     ```
 
-4. Configure the path of `store` folder in `settings.json`, like this:
+4. Configure the path of `store` folder in `settings.json`, if you don't do that, the default value is `["src"]`:
 
     ```JSON
     {
@@ -49,6 +49,8 @@ Whene we reference the vuex property in our `.vue` components, it's not a regula
       ]
     }
     ```
+
+5. 模块查找不支持驼峰命名
 
 ## Release Notes
 
