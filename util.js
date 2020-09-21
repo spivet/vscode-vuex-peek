@@ -8,20 +8,21 @@ const fs = require('fs');
  */
 function getLineNum(filePath, word) {
   let row = 0
+  let found = false
   const rl = readline.createInterface({
     input: fs.createReadStream(filePath),
     crlfDelay: Infinity
   })
-  return new Promise((resolve) => {
+  // return new Promise((resolve) => {
     rl.on('line', (line) => {
-      row++
-      if (new RegExp(word).test(line)) {
-        rl.close()
-        resolve(row)
+      !found && row++
+      if (new RegExp(word, 'gm').test(line)) {
+        found = true
       }
+      // resolve(row)
     })
-  })
-
+  // })
+    return row
 }
 
 /**

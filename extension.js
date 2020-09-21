@@ -9,34 +9,35 @@ const util = require('./util')
  * @param {*} position
  */
 async function provideDefinition(document, position) {
-	const filePath = document.uri.path
+	const documentFsPath = document.uri.fsPath // Node 能读取到的文件路径
+	const documentPath = document.uri.path
 	const workspacePath = vscode.workspace.workspaceFolders[0].uri.path.substr(1)
 	const word		= document.getText(document.getWordRangeAtPosition(position))
 	const line		= document.lineAt(position)
-
+	
 	const storePathArr = vscode.workspace.getConfiguration().get('vuex_peek.storePath')
-	const storePath = util.findStorePath(storePathArr, filePath)
+	const storePath = util.findStorePath(storePathArr, documentPath)
 	// 光标所在行的文字内容
 	const lineText = line.text.trim()
 	// 只处理package.json文件
 	if (lineText.slice(0, 2) === 'vx') {
-		const vuexType = lineText.slice(2,3)
+		const vuexType = await judegeVuexType(documentFsPath)
 		let filename
 		let destPath
 		switch (vuexType) {
-			case 's':
+			case '0':
 				filename = 'index.js'
 				destPath = handleState(lineText, workspacePath, storePath)
 				break;
-			case 'a':
+			case '1':
 				filename = 'actions.js'
 				destPath = handleAMG(lineText, workspacePath, storePath, filename)
 				break;
-			case 'm':
+			case '2':
 				filename = 'mutaions.js'
 				destPath = handleAMG(lineText, workspacePath, storePath, filename)
 				break;
-			case 'g':
+			case '3':
 				filename = 'getters.js'
 				destPath = handleAMG(lineText, workspacePath, storePath, filename)
 				break;
@@ -49,6 +50,19 @@ async function provideDefinition(document, position) {
 			return new vscode.Location(vscode.Uri.file(destPath), new vscode.Position(row - 1, 0))
 		}
 	}
+}
+
+async function judegeVuexType(documentFsPath) {
+	const lineOfMapState = await util.getLineNum(documentFsPath, '\\.\\.\\.mapState')
+	const lineOfMapGetters = await util.getLineNum(documentFsPath, '\\.\\.\\.mapGetters')
+	const lineOfMapMutations = await util.getLineNum(documentFsPath, '\\.\\.\\.mapMutations')
+	const lineOfMapActions = await util.getLineNum(documentFsPath, '\\.\\.\\.mapActions')
+
+	const lineList = [lineOfMapState, lineOfMapGetters, lineOfMapMutations, lineOfMapActions]
+	const lineListBigerThanZero = lineList.filter(line => line > 0)
+	const minLine = Math.min(...lineListBigerThanZero)
+
+	return lineList.indexOf(minLine)
 }
 
 function handleState(lineText, workspacePath, storePath) {

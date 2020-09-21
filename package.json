@@ -4,18 +4,18 @@
 	"description": "Allows peek and goto vuex definition for Vue components",
 	"icon": "images/vuex-peek-icon.png",
 	"keywords": [
-			"peek",
-			"definition",
-			"vue",
-			"vuex"
+		"peek",
+		"definition",
+		"vue",
+		"vuex"
 	],
-  "license": "MIT",
+	"license": "MIT",
 	"version": "0.7.2",
 	"publisher": "Mcbai",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Mcbai/vscode-vuex-peek"
-  },
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Mcbai/vscode-vuex-peek"
+	},
 	"engines": {
 		"vscode": "^1.33.0"
 	},
@@ -27,17 +27,19 @@
 	],
 	"main": "./extension.js",
 	"contributes": {
-    "configuration": {
-      "title": "vuex peek",
-      "properties": {
-        "vuex_peek.storePath": {
-          "type": "array",
-          "default": ["src/"],
+		"configuration": {
+			"title": "vuex peek",
+			"properties": {
+				"vuex_peek.storePath": {
+					"type": "array",
+					"default": [
+						"src/"
+					],
 					"items": {
-							"type": "string"
+						"type": "string"
 					},
-          "description": "A list for the path of store folder."
-        }
+					"description": "A list for the path of store folder."
+				}
 			}
 		}
 	},
